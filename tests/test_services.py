@@ -25,10 +25,11 @@ class TestAuthService:
 
     def test_login_returns_user_with_correct_credentials(self, app, db, user):
         svc = AuthService()
-        with app.app_context():
-            result = svc.login('test@example.com', 'password123')
-            assert result is not None
-            assert result.email == 'test@example.com'
+        with app.test_request_context():
+            with app.app_context():
+                result = svc.login('test@example.com', 'password123')
+                assert result is not None
+                assert result.email == 'test@example.com'
 
     def test_login_returns_none_with_wrong_password(self, app, db, user):
         svc = AuthService()
