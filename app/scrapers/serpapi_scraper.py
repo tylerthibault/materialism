@@ -119,10 +119,17 @@ class SerpAPIScraper:
                 return None
 
             logger.info(f"HD matched: {product.get('title')!r} @ ${price} (score={score:.2f})")
+            item_id = product.get('item_id', '')
+            if item_id:
+                title_slug = re.sub(r'[^a-zA-Z0-9]+', '-', product.get('title', '')).strip('-')
+                product_url = f"https://www.homedepot.com/p/{title_slug}/{item_id}"
+            else:
+                raw_url = product.get('link', '')
+                product_url = raw_url if raw_url.startswith('https://www.homedepot.com') else ''
             return {
                 'price_per_unit': price,
                 'product_name': product.get('title', item_name),
-                'product_url': product.get('link', ''),
+                'product_url': product_url,
                 'availability': 'in_stock',
                 'source': 'serpapi_hd',
                 'match_score': round(score, 2),

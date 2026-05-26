@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from flask_login import login_required, current_user
@@ -124,10 +125,22 @@ def search_products(project_id):
         data = resp.json()
         products = data.get('products') or data.get('products_results') or []
         for p in products[:6]:
+            item_id = p.get('item_id', '')
+            # Build proper storefront URL from item_id; avoid internal apionline.homedepot.com links
+            if item_id:
+                title_slug = re.sub(r'[^a-zA-Z0-9]+', '-', p.get('title', '')).strip('-')
+                url = f"https://www.homedepot.com/p/{title_slug}/{item_id}"
+            else:
+                raw_url = p.get('link', '')
+                # Replace internal API URLs with a generic search URL
+                if 'apionline.homedepot.com' in raw_url or not raw_url.startswith('https://www.homedepot.com'):
+                    url = f"https://www.homedepot.com/s/{requests.utils.quote(p.get('title', q))}"
+                else:
+                    url = raw_url
             hd_results.append({
                 'title': p.get('title', ''),
                 'price': p.get('price', ''),
-                'url': p.get('link', ''),
+                'url': url,
                 'thumbnail': p.get('thumbnail', ''),
             })
     except Exception:
