@@ -1,0 +1,56 @@
+{% extends 'bases/private.html' %}
+{% block title %}Dashboard — BuildBid{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+  <h1 class="mb-4 fw-bold">Dashboard</h1>
+  {% include 'components/flash_messages.html' %}
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="card text-center p-3 shadow-sm">
+        <div class="display-6 fw-bold text-primary">{{ stats.total_projects }}</div>
+        <div class="text-muted">Total Projects</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center p-3 shadow-sm">
+        <div class="display-6 fw-bold text-success">{{ stats.active_projects }}</div>
+        <div class="text-muted">Active Projects</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center p-3 shadow-sm">
+        <div class="display-6 fw-bold text-info">{{ stats.total_items }}</div>
+        <div class="text-muted">Materials Tracked</div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Recent Projects</h4>
+    <a href="{{ url_for('projects.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
+  </div>
+  {% if recent_projects %}
+  <div class="row g-3">
+    {% for project in recent_projects %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ project.name }}</h5>
+          <p class="card-text text-muted small">{{ project.client_name }} — {{ project.location }}</p>
+          <span class="badge bg-success">{{ project.status.value }}</span>
+        </div>
+        <div class="card-footer bg-transparent d-flex gap-2">
+          <a href="{{ url_for('projects.detail', project_id=project.id) }}" class="btn btn-sm btn-outline-secondary">View</a>
+          <a href="{{ url_for('compare.matrix', project_id=project.id) }}" class="btn btn-sm btn-primary">Compare Prices</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <p class="text-muted">No projects yet.</p>
+    <a href="{{ url_for('projects.create') }}" class="btn btn-primary">Create Your First Project</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

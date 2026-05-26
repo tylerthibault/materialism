@@ -1,0 +1,11 @@
+<div class="sidebar d-flex flex-column p-3" style="width:220px;min-height:100vh;background-color:#1a3c5e;color:#fff">
+  <div class="fw-bold fs-5 mb-4">🔨 BuildBid</div>
+  <nav class="nav flex-column gap-1">
+    <a href="{{ url_for('dashboard.index') }}" class="nav-link text-white"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+    <a href="{{ url_for('projects.index') }}" class="nav-link text-white"><i class="bi bi-folder me-2"></i>Projects</a>
+  </nav>
+  <div class="mt-auto">
+    <small class="text-white-50">{{ current_user.name if current_user.is_authenticated else '' }}</small><br>
+    <a href="{{ url_for('auth.logout') }}" class="nav-link text-white-50 small"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
+  </div>
+</div>

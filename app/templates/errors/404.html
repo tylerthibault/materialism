@@ -1,0 +1,10 @@
+{% extends 'bases/public.html' %}
+{% block title %}404 Not Found — BuildBid{% endblock %}
+{% block content %}
+<div class="container text-center py-5">
+  <h1 class="display-1 fw-bold" style="color:#0F1F3D;">404</h1>
+  <h3 class="mb-3">Page Not Found</h3>
+  <p class="text-muted">The page you're looking for doesn't exist.</p>
+  <a href="{{ url_for('landing.index') }}" class="btn btn-primary mt-2">Go Home</a>
+</div>
+{% endblock %}
