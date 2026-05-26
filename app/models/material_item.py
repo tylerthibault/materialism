@@ -28,6 +28,14 @@ class MaterialItem(db.Model):
     sort_order = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Pinned products per store
+    hd_product_name = db.Column(db.String(500))
+    hd_product_url = db.Column(db.String(1000))
+    hd_product_price = db.Column(db.Float)
+    lowes_product_name = db.Column(db.String(500))
+    lowes_product_url = db.Column(db.String(1000))
+    lowes_product_price = db.Column(db.Float)
+
     price_results = db.relationship('PriceResult', backref='item', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self):

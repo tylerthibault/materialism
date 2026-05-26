@@ -1,6 +1,7 @@
 from app.models.material_list import MaterialList
 from app.models.material_item import MaterialItem, UnitType
 from app.repositories.material_repository import MaterialRepository
+from app.extensions import db
 
 repo = MaterialRepository()
 
@@ -24,11 +25,24 @@ class MaterialService:
             unit = UnitType(unit_val)
         except ValueError:
             unit = UnitType.EACH
+
+        def _parse_price(val):
+            try:
+                return float(val) if val else None
+            except (ValueError, TypeError):
+                return None
+
         item = MaterialItem(
             list_id=list_id,
             name=form_data['name'],
             quantity=float(form_data.get('quantity', 1)),
             unit=unit,
+            hd_product_name=form_data.get('hd_product_name') or None,
+            hd_product_url=form_data.get('hd_product_url') or None,
+            hd_product_price=_parse_price(form_data.get('hd_product_price')),
+            lowes_product_name=form_data.get('lowes_product_name') or None,
+            lowes_product_url=form_data.get('lowes_product_url') or None,
+            lowes_product_price=_parse_price(form_data.get('lowes_product_price')),
         )
         return repo.save_item(item)
 
@@ -36,3 +50,17 @@ class MaterialService:
         item = repo.get_item_by_id(item_id)
         if item:
             repo.delete_item(item)
+
+    def pin_product(self, item_id, store, product_name, product_url, product_price):
+        item = repo.get_item_by_id(item_id)
+        if not item:
+            return
+        if store == 'hd':
+            item.hd_product_name = product_name or None
+            item.hd_product_url = product_url or None
+            item.hd_product_price = float(product_price) if product_price else None
+        elif store == 'lowes':
+            item.lowes_product_name = product_name or None
+            item.lowes_product_url = product_url or None
+            item.lowes_product_price = float(product_price) if product_price else None
+        db.session.commit()

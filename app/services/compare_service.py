@@ -114,7 +114,14 @@ class CompareService:
                 for store in active_stores:
                     if not store.supports_scraping:
                         continue
-                    data = scrapers_module.fetch_price(item.name, store.name, zip_code=zip_code)
+                    # Use pinned product name for more precise search if available
+                    if store.name == 'Home Depot' and item.hd_product_name:
+                        search_query = item.hd_product_name
+                    elif store.name in ("Lowe's", 'Lowes') and item.lowes_product_name:
+                        search_query = item.lowes_product_name
+                    else:
+                        search_query = item.name
+                    data = scrapers_module.fetch_price(search_query, store.name, zip_code=zip_code)
                     if data is None:
                         # No live data — skip (don't fill with mock in production)
                         continue
