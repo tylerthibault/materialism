@@ -1,5 +1,5 @@
 {% extends 'bases/private.html' %}
-{% block title %}{{ 'Edit' if project else 'New' }} Project — BuildBid{% endblock %}
+{% block title %}{{ 'Edit' if project else 'New' }} Project — Materialism{% endblock %}
 {% block content %}
 <div class="container py-4">
   <div class="row justify-content-center">
@@ -18,9 +18,16 @@
               {{ form.client_name.label(class="form-label fw-semibold") }}
               {{ form.client_name(class="form-control") }}
             </div>
-            <div class="mb-3">
-              {{ form.location.label(class="form-label fw-semibold") }}
-              {{ form.location(class="form-control", placeholder="City, State") }}
+            <div class="row g-3 mb-3">
+              <div class="col-8">
+                {{ form.location.label(class="form-label fw-semibold") }}
+                {{ form.location(class="form-control", placeholder="City, State") }}
+              </div>
+              <div class="col-4">
+                {{ form.zip_code.label(class="form-label fw-semibold") }}
+                {{ form.zip_code(class="form-control", placeholder="Zip Code") }}
+                <div class="form-text">Used for local pricing</div>
+              </div>
             </div>
             <div class="mb-3">
               {{ form.description.label(class="form-label fw-semibold") }}

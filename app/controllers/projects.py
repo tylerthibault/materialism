@@ -24,6 +24,7 @@ def create():
             'name': form.name.data,
             'client_name': form.client_name.data,
             'location': form.location.data,
+            'zip_code': form.zip_code.data,
             'description': form.description.data,
         })
         flash('Project created!', 'success')
@@ -52,6 +53,7 @@ def edit(project_id):
             'name': form.name.data,
             'client_name': form.client_name.data,
             'location': form.location.data,
+            'zip_code': form.zip_code.data,
             'description': form.description.data,
             'status': form.status.data,
         })

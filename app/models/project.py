@@ -17,6 +17,7 @@ class Project(db.Model):
     name = db.Column(db.String(200), nullable=False)
     client_name = db.Column(db.String(150))
     location = db.Column(db.String(200))
+    zip_code = db.Column(db.String(10))
     description = db.Column(db.Text)
     status = db.Column(db.Enum(ProjectStatus), default=ProjectStatus.ACTIVE, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

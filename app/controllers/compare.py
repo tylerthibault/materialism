@@ -28,7 +28,7 @@ def refresh(project_id):
     project = project_service.get_project(project_id)
     if not project or project.user_id != current_user.id:
         abort(404)
-    compare_service.refresh_prices(project, zip_code=current_user.zip_code)
+    compare_service.refresh_prices(project, zip_code=project.zip_code)
     flash('Live prices fetched from Home Depot and Lowe\'s!', 'success')
     return redirect(url_for('compare.matrix', project_id=project_id))
 

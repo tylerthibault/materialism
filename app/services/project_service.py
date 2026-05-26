@@ -17,6 +17,7 @@ class ProjectService:
             name=form_data['name'],
             client_name=form_data.get('client_name', ''),
             location=form_data.get('location', ''),
+            zip_code=form_data.get('zip_code', ''),
             description=form_data.get('description', ''),
             status=ProjectStatus.ACTIVE,
         )
@@ -26,6 +27,7 @@ class ProjectService:
         project.name = form_data['name']
         project.client_name = form_data.get('client_name', '')
         project.location = form_data.get('location', '')
+        project.zip_code = form_data.get('zip_code', '')
         project.description = form_data.get('description', '')
         status_val = form_data.get('status', ProjectStatus.ACTIVE.value)
         project.status = ProjectStatus(status_val)
