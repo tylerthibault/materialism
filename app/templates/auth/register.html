@@ -19,6 +19,11 @@
               {{ form.company_name(class="form-control") }}
             </div>
             <div class="mb-3">
+              {{ form.zip_code.label(class="form-label") }}
+              {{ form.zip_code(class="form-control", placeholder="e.g. 90210") }}
+              <div class="form-text">Used to show local pricing at Home Depot &amp; Lowe's.</div>
+            </div>
+            <div class="mb-3">
               {{ form.email.label(class="form-label") }}
               {{ form.email(class="form-control") }}
             </div>

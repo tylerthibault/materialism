@@ -3,6 +3,7 @@
   <nav class="nav flex-column gap-1">
     <a href="{{ url_for('dashboard.index') }}" class="nav-link text-white"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
     <a href="{{ url_for('projects.index') }}" class="nav-link text-white"><i class="bi bi-folder me-2"></i>Projects</a>
+    <a href="{{ url_for('profile.edit') }}" class="nav-link text-white"><i class="bi bi-person-gear me-2"></i>Profile / Settings</a>
   </nav>
   <div class="mt-auto">
     <small class="text-white-50">{{ current_user.name if current_user.is_authenticated else '' }}</small><br>

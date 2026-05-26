@@ -99,7 +99,7 @@ class CompareService:
 
         return matrix, stores, optimizer_data
 
-    def refresh_prices(self, project):
+    def refresh_prices(self, project, zip_code=None):
         """Fetch live prices from scrapers; fall back to mock for stores that fail."""
         import app.scrapers as scrapers_module
         from app.scrapers.mock_scraper import MockScraper
@@ -115,7 +115,7 @@ class CompareService:
                     # Skip manual-only stores (FB Marketplace, Local Store)
                     if store.name in ('Facebook Marketplace', 'Local Store'):
                         continue
-                    data = scrapers_module.fetch_price(item.name, store.name)
+                    data = scrapers_module.fetch_price(item.name, store.name, zip_code=zip_code)
                     if data is None:
                         # No live data — skip (don't fill with mock in production)
                         continue

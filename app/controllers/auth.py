@@ -31,6 +31,7 @@ def register():
             'email': form.email.data,
             'name': form.name.data,
             'company_name': form.company_name.data,
+            'zip_code': form.zip_code.data,
             'password': form.password.data,
         })
         flash('Account created! Please sign in.', 'success')

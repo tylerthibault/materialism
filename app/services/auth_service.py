@@ -11,6 +11,7 @@ class AuthService:
             email=form_data['email'],
             name=form_data['name'],
             company_name=form_data.get('company_name', ''),
+            zip_code=form_data.get('zip_code', ''),
             role=UserRole.USER,
         )
         user.set_password(form_data['password'])

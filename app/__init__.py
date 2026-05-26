@@ -33,6 +33,7 @@ def create_app(env=None):
     from .controllers.projects import projects_bp
     from .controllers.materials import materials_bp
     from .controllers.compare import compare_bp
+    from .controllers.profile import profile_bp
 
     app.register_blueprint(landing_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -40,6 +41,7 @@ def create_app(env=None):
     app.register_blueprint(projects_bp, url_prefix='/projects')
     app.register_blueprint(materials_bp)
     app.register_blueprint(compare_bp)
+    app.register_blueprint(profile_bp, url_prefix='/profile')
 
     # Error handlers
     from flask import render_template
