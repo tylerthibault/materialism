@@ -14,6 +14,16 @@ class PriceRepository:
         PriceResult.query.filter_by(item_id=item_id).delete()
         db.session.commit()
 
+    def delete_auto_prices_for_item(self, item_id):
+        """Delete only auto-fetched (non-manual) prices for an item."""
+        PriceResult.query.filter_by(item_id=item_id, is_manual=False).delete()
+        db.session.commit()
+
+    def delete_manual_price_for_item(self, item_id, store_id):
+        """Delete a specific manual price for an item+store combo."""
+        PriceResult.query.filter_by(item_id=item_id, store_id=store_id, is_manual=True).delete()
+        db.session.commit()
+
     def save(self, price_result):
         db.session.add(price_result)
         db.session.commit()

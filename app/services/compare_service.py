@@ -36,6 +36,9 @@ class CompareService:
                         prices_by_store[pr.store_id] = {
                             'unit_price': pr.price_per_unit,
                             'total': pr.total_price or pr.price_per_unit * item.quantity,
+                            'url': pr.product_url or '',
+                            'is_manual': pr.is_manual,
+                            'source': 'manual' if pr.is_manual else 'live',
                         }
 
                 totals = [v['total'] for v in prices_by_store.values()]
@@ -97,24 +100,57 @@ class CompareService:
         return matrix, stores, optimizer_data
 
     def refresh_prices(self, project):
-        """Use mock scraper for dev; real scrapers can be swapped in later."""
-        scraper = MockScraper()
+        """Fetch live prices from scrapers; fall back to mock for stores that fail."""
+        import app.scrapers as scrapers_module
+        from app.scrapers.mock_scraper import MockScraper
+        mock = MockScraper()
+
         for mat_list in project.material_lists:
             for item in mat_list.items:
                 stores = price_repo.get_stores()
-                price_repo.delete_prices_for_item(item.id)
+                # Preserve manually-entered prices; only replace auto-fetched ones
+                price_repo.delete_auto_prices_for_item(item.id)
                 results = []
                 for store in stores:
-                    data = scraper.fetch_price(item.name, store.name)
+                    # Skip manual-only stores (FB Marketplace, Local Store)
+                    if store.name in ('Facebook Marketplace', 'Local Store'):
+                        continue
+                    data = scrapers_module.fetch_price(item.name, store.name)
+                    if data is None:
+                        # No live data — skip (don't fill with mock in production)
+                        continue
                     pr = PriceResult(
                         item_id=item.id,
                         store_id=store.id,
                         price_per_unit=data['price_per_unit'],
                         total_price=data['price_per_unit'] * item.quantity,
-                        product_name=data['product_name'],
+                        product_name=data.get('product_name', item.name),
+                        product_url=data.get('product_url', ''),
                         availability=AvailabilityStatus.IN_STOCK,
                         fetched_at=datetime.utcnow(),
                         is_manual=False,
                     )
                     results.append(pr)
-                price_repo.bulk_save(results)
+                if results:
+                    price_repo.bulk_save(results)
+
+    def set_manual_price(self, item_id, store_id, price_per_unit, notes=''):
+        """Save a manually-entered price (Facebook Marketplace, local store, etc.)."""
+        from app.models.material_item import MaterialItem
+        item = MaterialItem.query.get(item_id)
+        if not item:
+            return None
+        price_repo.delete_manual_price_for_item(item_id, store_id)
+        pr = PriceResult(
+            item_id=item_id,
+            store_id=store_id,
+            price_per_unit=price_per_unit,
+            total_price=price_per_unit * item.quantity,
+            product_name=notes or item.name,
+            product_url='',
+            availability=AvailabilityStatus.IN_STOCK,
+            fetched_at=datetime.utcnow(),
+            is_manual=True,
+        )
+        price_repo.save(pr)
+        return pr
