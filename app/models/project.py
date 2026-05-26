@@ -24,6 +24,7 @@ class Project(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     material_lists = db.relationship('MaterialList', backref='project', lazy=True, cascade='all, delete-orphan')
+    selected_stores = db.relationship('StoreSource', secondary='project_stores', lazy='subquery')
 
     def __repr__(self):
         return f'<Project {self.name}>'

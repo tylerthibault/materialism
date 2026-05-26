@@ -8,6 +8,7 @@ class ProjectForm(FlaskForm):
     name = StringField('Project Name', validators=[DataRequired(), Length(max=200)])
     client_name = StringField('Client Name', validators=[Optional(), Length(max=150)])
     location = StringField('Location', validators=[Optional(), Length(max=200)])
+    zip_code = StringField('Zip Code', validators=[Optional(), Length(max=10)])
     description = TextAreaField('Description', validators=[Optional()])
     status = SelectField('Status', choices=[(s.value, s.value.title()) for s in ProjectStatus],
                          default=ProjectStatus.ACTIVE.value)

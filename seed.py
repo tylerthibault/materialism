@@ -26,14 +26,13 @@ with app.app_context():
     stores = [
         StoreSource(name='Home Depot', store_type=StoreType.HOME_DEPOT, website_url='https://www.homedepot.com', is_active=True, supports_scraping=True),
         StoreSource(name="Lowe's", store_type=StoreType.LOWES, website_url='https://www.lowes.com', is_active=True, supports_scraping=True),
-        StoreSource(name='Local Lumber Co.', store_type=StoreType.LOCAL, website_url='', is_active=True, supports_scraping=False),
-        StoreSource(name='Facebook Marketplace', store_type=StoreType.FACEBOOK, website_url='https://www.facebook.com/marketplace', is_active=True, supports_scraping=True),
     ]
     db.session.add_all(stores)
     db.session.flush()
-    hd, lowes, local, fb = stores
+    hd, lowes = stores
 
     p1 = Project(user_id=demo.id, name='Smith Residence Remodel', client_name='John Smith', location='Seattle, WA', description='Full interior remodel', status=ProjectStatus.ACTIVE)
+    p1.selected_stores = [hd, lowes]
     db.session.add(p1)
     db.session.flush()
 
@@ -56,12 +55,12 @@ with app.app_context():
     db.session.flush()
 
     price_data = {
-        framing_items[0].id: {hd.id: 4.98, lowes.id: 5.12, local.id: 4.75, fb.id: 3.50},
-        framing_items[1].id: {hd.id: 28.45, lowes.id: 27.99, local.id: 30.00},
-        framing_items[2].id: {hd.id: 189.00, lowes.id: 195.00, local.id: 175.00},
-        drywall_items[0].id: {hd.id: 13.48, lowes.id: 12.99, local.id: 14.00, fb.id: 9.50},
-        drywall_items[1].id: {hd.id: 8.97, lowes.id: 9.48, local.id: 10.00},
-        drywall_items[2].id: {hd.id: 1.28, lowes.id: 1.35, local.id: 1.50},
+        framing_items[0].id: {hd.id: 4.98, lowes.id: 5.12},
+        framing_items[1].id: {hd.id: 28.45, lowes.id: 27.99},
+        framing_items[2].id: {hd.id: 189.00, lowes.id: 195.00},
+        drywall_items[0].id: {hd.id: 13.48, lowes.id: 12.99},
+        drywall_items[1].id: {hd.id: 8.97, lowes.id: 9.48},
+        drywall_items[2].id: {hd.id: 1.28, lowes.id: 1.35},
     }
     for item_id, store_prices in price_data.items():
         item = MaterialItem.query.get(item_id)
@@ -73,6 +72,7 @@ with app.app_context():
             db.session.add(pr)
 
     p2 = Project(user_id=demo.id, name='Johnson Commercial Addition', client_name='Mike Johnson', location='Tacoma, WA', description='500 sqft commercial addition', status=ProjectStatus.ACTIVE)
+    p2.selected_stores = [hd, lowes]
     db.session.add(p2)
     db.session.flush()
 
@@ -95,12 +95,12 @@ with app.app_context():
     db.session.flush()
 
     price_data2 = {
-        concrete_items[0].id: {hd.id: 7.98, lowes.id: 7.64, local.id: 8.50},
-        concrete_items[1].id: {hd.id: 11.48, lowes.id: 10.98, local.id: 12.00, fb.id: 7.00},
-        concrete_items[2].id: {hd.id: 34.98, lowes.id: 33.48, local.id: 36.00},
-        roofing_items[0].id: {hd.id: 98.00, lowes.id: 95.00, local.id: 102.00},
-        roofing_items[1].id: {hd.id: 72.00, lowes.id: 68.50, local.id: 75.00},
-        roofing_items[2].id: {hd.id: 4.28, lowes.id: 3.98, local.id: 4.75},
+        concrete_items[0].id: {hd.id: 7.98, lowes.id: 7.64},
+        concrete_items[1].id: {hd.id: 11.48, lowes.id: 10.98},
+        concrete_items[2].id: {hd.id: 34.98, lowes.id: 33.48},
+        roofing_items[0].id: {hd.id: 98.00, lowes.id: 95.00},
+        roofing_items[1].id: {hd.id: 72.00, lowes.id: 68.50},
+        roofing_items[2].id: {hd.id: 4.28, lowes.id: 3.98},
     }
     for item_id, store_prices in price_data2.items():
         item = MaterialItem.query.get(item_id)

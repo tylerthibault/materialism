@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from app.forms.project_forms import ProjectForm
 from app.services.project_service import ProjectService
 from app.models.project import ProjectStatus
+from app.models.store import StoreSource
 
 projects_bp = Blueprint('projects', __name__)
 project_service = ProjectService()
@@ -19,17 +20,19 @@ def index():
 @login_required
 def create():
     form = ProjectForm()
+    stores = StoreSource.query.filter_by(is_active=True).all()
     if form.validate_on_submit():
+        store_ids = request.form.getlist('store_ids', type=int)
         project_service.create_project(current_user.id, {
             'name': form.name.data,
             'client_name': form.client_name.data,
             'location': form.location.data,
             'zip_code': form.zip_code.data,
             'description': form.description.data,
-        })
+        }, store_ids=store_ids)
         flash('Project created!', 'success')
         return redirect(url_for('projects.index'))
-    return render_template('projects/form.html', form=form, project=None)
+    return render_template('projects/form.html', form=form, project=None, stores=stores)
 
 
 @projects_bp.route('/<int:project_id>')
@@ -48,7 +51,9 @@ def edit(project_id):
     if not project or project.user_id != current_user.id:
         abort(404)
     form = ProjectForm(obj=project)
+    stores = StoreSource.query.filter_by(is_active=True).all()
     if form.validate_on_submit():
+        store_ids = request.form.getlist('store_ids', type=int)
         project_service.update_project(project, {
             'name': form.name.data,
             'client_name': form.client_name.data,
@@ -56,12 +61,12 @@ def edit(project_id):
             'zip_code': form.zip_code.data,
             'description': form.description.data,
             'status': form.status.data,
-        })
+        }, store_ids=store_ids)
         flash('Project updated!', 'success')
         return redirect(url_for('projects.detail', project_id=project.id))
     # Pre-populate status
     form.status.data = project.status.value
-    return render_template('projects/form.html', form=form, project=project)
+    return render_template('projects/form.html', form=form, project=project, stores=stores)
 
 
 @projects_bp.route('/<int:project_id>/delete', methods=['POST'])

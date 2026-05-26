@@ -14,7 +14,7 @@ class CompareService:
         return price_repo.get_stores()
 
     def build_matrix(self, project):
-        stores = self.get_stores()
+        stores = project.selected_stores if project.selected_stores else self.get_stores()
         store_map = {s.id: s for s in stores}
         matrix = {}  # list_name -> [row dicts]
         optimizer_data = {
@@ -105,15 +105,14 @@ class CompareService:
         from app.scrapers.mock_scraper import MockScraper
         mock = MockScraper()
 
+        active_stores = project.selected_stores if project.selected_stores else price_repo.get_stores()
         for mat_list in project.material_lists:
             for item in mat_list.items:
-                stores = price_repo.get_stores()
                 # Preserve manually-entered prices; only replace auto-fetched ones
                 price_repo.delete_auto_prices_for_item(item.id)
                 results = []
-                for store in stores:
-                    # Skip manual-only stores (FB Marketplace, Local Store)
-                    if store.name in ('Facebook Marketplace', 'Local Store'):
+                for store in active_stores:
+                    if not store.supports_scraping:
                         continue
                     data = scrapers_module.fetch_price(item.name, store.name, zip_code=zip_code)
                     if data is None:

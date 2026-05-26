@@ -2,11 +2,16 @@ import enum
 from app.extensions import db
 
 
+project_stores = db.Table('project_stores',
+    db.Column('project_id', db.Integer, db.ForeignKey('projects.id'), primary_key=True),
+    db.Column('store_id', db.Integer, db.ForeignKey('store_sources.id'), primary_key=True)
+)
+
+
 class StoreType(enum.Enum):
     HOME_DEPOT = 'home_depot'
     LOWES = 'lowes'
     LOCAL = 'local'
-    FACEBOOK = 'facebook'
     OTHER = 'other'
 
 
